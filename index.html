@@ -61,14 +61,13 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
 		var affe = findNamedMesh("affe");
 		affe.material = affenMaterial;
 		
-		for (var i=0;i<500;i++) {
+		/*for (var i=0;i<500;i++) {
 			// depends a lot on your environment if this can make a difference. at home on my desktop clone vs createInstance is 8fps vs 60fps at
 			// 5k affen
 			var childAffe = affe.createInstance();
 			childAffe.position.x = Math.random() * 10 - 5;
 			childAffe.position.z = Math.random() * 10 - 5;
-		}
-
+		}*/
 		
 		// mop: a new light :O
 		var light = new BABYLON.PointLight(null, new BABYLON.Vector3.Zero(), scene);
@@ -85,18 +84,51 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
 		plane.position.y = 2;
 		plane.position.x = -5;
 		plane.position.z = -5;
+		plane.setPhysicsState(BABYLON.PhysicsEngine.MeshImpostor, { mass: 0, friction: 0.4, restitution: 0.3});
 		
-		for (var i=0;i<500;i++) {
-			// depends a lot on your environment if this can make a difference. at home on my desktop clone vs createInstance is 8fps vs 60fps at
-			// 5k affen
-			var childAffe = affe.createInstance();
-			childAffe.position.x = Math.random() * 10 - 5;
-			childAffe.position.z = Math.random() * 10 - 5;
-		}
-		
+		var affenRotation = 0;
+		var createBlob = function(position) {
+			var sphere = new BABYLON.Mesh.CreateSphere(null, 10, 10, scene);
+			sphere.position = position;
+			sphere.scaling.x = 0.1;
+			sphere.scaling.y = 0.1;
+			sphere.scaling.z = 0.1;
+			sphere.setPhysicsState(BABYLON.PhysicsEngine.SphereImpostor, { mass: 1, friction: 0.4, restitution: 0.3 });			
+			
+			return sphere;
+		};
+		scene.onPointerDown = function(evt, result) {
+			if (result.hit) {
+				if (result.pickedMesh === ground) {
+					var position = new BABYLON.Vector3(result.pickedPoint.x, 5, result.pickedPoint.z);
+					createBlob(position);
+				} else if (result.pickedMesh === affe) {
+					if (evt.button == 0) {
+						affenRotation += 0.01;
+					} else if (evt.button == 1) {
+						affenRotation -= 0.01;
+					}
+				}
+			}
+		};
+		// interestingly you can't do scene.onKeyDown it seems :S
+		window.addEventListener("keydown", function(evt) {
+			if (evt.keyCode == 32) {
+				var position = scene.activeCamera.position.clone();
+				var sphere = createBlob(position);
+				
+				var direction = scene.activeCamera.getTarget().subtract(position);
+				
+				
+				sphere.applyImpulse(direction.multiplyByFloats(20, 20, 20), position.subtract(direction));
+				
+			}
+		}, false);
+	
 		var fps = document.getElementById("fps");
 		// Once the scene is loaded, just register a render loop to render it
 		engine.runRenderLoop(function() {
+			affe.rotation.z += affenRotation;
 			scene.render();
 			fps.innerHTML = BABYLON.Tools.GetFps().toFixed() + " fps";
 		});
