@@ -23,6 +23,38 @@ html, body {
 </style>
 <script type="text/javascript" src="babylon.1.14-beta-debug.js"></script>
 <script type="text/javascript" src="cannon.js"></script>
+<script type="application/vertexShader" id="vertexShaderCode">
+precision highp float;
+
+// Attributes
+attribute vec3 position;
+attribute vec2 uv;
+
+// Uniforms
+uniform mat4 worldViewProjection;
+uniform float time;
+
+// Normal
+varying vec2 vUV;
+
+varying vec3 newPosition;
+
+void main(void) {
+	newPosition = vec3(position[0], position[1] + sin(position.x * time/5.0) * 0.1, position[2]);
+	gl_Position = worldViewProjection * vec4(newPosition, 1.0);
+	vUV = uv;
+}
+</script>
+
+<script type="application/fragmentShader" id="fragmentShaderCode">
+precision highp float;
+varying vec2 vUV;
+uniform float time;
+
+void main(void) {
+	gl_FragColor = vec4(sin(time), cos(time), 0.0, 0.2);
+}
+</script>
 </head>
 <body>
 <canvas id="canvas"></canvas>
@@ -136,9 +168,28 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
 			}
 		}, false);
 	
+		var shaderPlane = BABYLON.Mesh.CreateGround("shaderground", 5, 5, 10, scene);
+		shaderPlane.position.y = 2;
+		shaderPlane.position.x = 5;
+		shaderPlane.position.z = -5;
+		
+		var shaderMaterial = new BABYLON.ShaderMaterial("shaderMaterial", scene, {
+            vertexElement: "vertexShaderCode",
+            fragmentElement: "fragmentShaderCode",
+        },
+        {
+            attributes: ["position", "uv"],
+            uniforms: ["worldViewProjection", "time"]
+        });
+		var time = 0.0;
+		shaderMaterial.setFloat("time", time);
+		shaderPlane.material = shaderMaterial;
+	
 		var fps = document.getElementById("fps");
 		// Once the scene is loaded, just register a render loop to render it
 		engine.runRenderLoop(function() {
+			time++;
+			shaderMaterial.setFloat("time", time);
 			affe.rotation.z += affenRotation;
 			scene.render();
 			fps.innerHTML = BABYLON.Tools.GetFps().toFixed() + " fps";
