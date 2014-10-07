@@ -22,6 +22,7 @@ html, body {
 }
 </style>
 <script type="text/javascript" src="babylon.1.14-beta-debug.js"></script>
+<script type="text/javascript" src="cannon.js"></script>
 </head>
 <body>
 <canvas id="canvas"></canvas>
@@ -42,6 +43,10 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
 		var icosphere = scene.meshes[0];
 		icosphere.checkCollisions = true;
 		
+		scene.enablePhysics(null, new BABYLON.CannonJSPlugin());
+		icosphere.setPhysicsState(BABYLON.PhysicsEngine.SphereImpostor, { mass: 2, friction: 0.4, restitution: 0.3 });
+		// mop: mass 0 => static object
+		ground.setPhysicsState(BABYLON.PhysicsEngine.BoxImpostor, { mass: 0, friction: 0.4, restitution: 2 });
 		
 		var fps = document.getElementById("fps");
 		// Once the scene is loaded, just register a render loop to render it
