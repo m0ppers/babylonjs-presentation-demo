@@ -48,6 +48,19 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
 		// mop: mass 0 => static object
 		ground.setPhysicsState(BABYLON.PhysicsEngine.BoxImpostor, { mass: 0, friction: 0.4, restitution: 2 });
 		
+		var findNamedMesh = function(name) {
+			return scene.meshes.filter(function(mesh) {
+				return mesh.name == name;
+			})[0];
+		}
+		
+		var affenMaterial = new BABYLON.StandardMaterial("affenMaterial", scene);
+		affenMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);
+		affenMaterial.emissiveColor = new BABYLON.Color3(0, 0, 1);
+		
+		var affe = findNamedMesh("affe");
+		affe.material = affenMaterial;
+		
 		var fps = document.getElementById("fps");
 		// Once the scene is loaded, just register a render loop to render it
 		engine.runRenderLoop(function() {
