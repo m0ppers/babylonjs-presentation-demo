@@ -61,6 +61,22 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
 		var affe = findNamedMesh("affe");
 		affe.material = affenMaterial;
 		
+		// mop: a new light :O
+		var light = new BABYLON.PointLight(null, new BABYLON.Vector3.Zero(), scene);
+		light.position.x = 2;
+		light.position.y = 10;
+		light.position.z = -5;
+		light.diffuse = BABYLON.Color3.Blue();
+
+		// mop: a new plane
+		var plane = BABYLON.Mesh.CreateGround("fluffi", 5, 5, 10, scene, true);
+		var material = new BABYLON.StandardMaterial("affenMaterial", scene);
+		material.wireframe = true;
+		plane.material = material;
+		plane.position.y = 2;
+		plane.position.x = -5;
+		plane.position.z = -5;
+		
 		var fps = document.getElementById("fps");
 		// Once the scene is loaded, just register a render loop to render it
 		engine.runRenderLoop(function() {
