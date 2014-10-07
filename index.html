@@ -31,6 +31,9 @@ var engine = new BABYLON.Engine(canvas, true);
 BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
 	// file is loaded
 	scene.executeWhenReady(function () {
+		// scene (material et al) is ready
+		scene.activeCamera.attachControl(canvas);
+		
 		var fps = document.getElementById("fps");
 		// Once the scene is loaded, just register a render loop to render it
 		engine.runRenderLoop(function() {
