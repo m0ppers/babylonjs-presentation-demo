@@ -33,6 +33,15 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
 	scene.executeWhenReady(function () {
 		// scene (material et al) is ready
 		scene.activeCamera.attachControl(canvas);
+		// activate collision check on camera
+		scene.activeCamera.checkCollisions = true;
+		
+		var ground = scene.meshes[3];
+		ground.checkCollisions = true;
+		
+		var icosphere = scene.meshes[0];
+		icosphere.checkCollisions = true;
+		
 		
 		var fps = document.getElementById("fps");
 		// Once the scene is loaded, just register a render loop to render it
