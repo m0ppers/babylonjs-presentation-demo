@@ -86,6 +86,17 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
 		plane.position.z = -5;
 		plane.setPhysicsState(BABYLON.PhysicsEngine.MeshImpostor, { mass: 0, friction: 0.4, restitution: 0.3});
 		
+		var counter = 0;
+		scene.registerBeforeRender(function() {
+			var verticesData = plane.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+			for (var i=1;i<verticesData.length;i+=3) {
+				verticesData[i] = Math.cos(counter + i * 0.02) * 0.2;
+			}
+			plane.updateVerticesData(BABYLON.VertexBuffer.PositionKind, verticesData);
+			counter += 0.1;
+		});
+
+		
 		var affenRotation = 0;
 		var createBlob = function(position) {
 			var sphere = new BABYLON.Mesh.CreateSphere(null, 10, 10, scene);
