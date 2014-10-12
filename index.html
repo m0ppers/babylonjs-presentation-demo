@@ -101,12 +101,48 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
 			childAffe.position.z = Math.random() * 10 - 5;
 		}*/
 		
-		// mop: a new light :O
-		var light = new BABYLON.PointLight(null, new BABYLON.Vector3.Zero(), scene);
-		light.position.x = 2;
-		light.position.y = 10;
-		light.position.z = -5;
-		light.diffuse = BABYLON.Color3.Blue();
+		var createLight = function(position, diffuseColor, specularColor, scene) {
+			var light = new BABYLON.SpotLight(null, position, new BABYLON.Vector3.Zero().subtract(position), 1, 2, scene);
+			light.diffuse = diffuseColor;
+			light.specular = specularColor;
+			
+			
+			var lightAnimation = new BABYLON.Animation(
+				null,
+				"direction.y",
+	30,
+	BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+	BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+			
+			var keys = [];  
+			keys.push({
+				frame: 0,
+				value: light.direction.y
+			});
+			keys.push({
+				frame: 60,
+				value: light.direction.y + 10
+			});
+			keys.push({
+				frame: 120,
+				value: light.direction.y
+			});
+
+			lightAnimation.setKeys(keys);
+			light.animations.push(lightAnimation);
+			//Finally, launch animations on box1, from key 0 to key 100 with loop activated
+			scene.beginAnimation(light, 0, 120, true);
+		}
+		
+		// disco :O
+		createLight(new BABYLON.Vector3(10, 10, 0), new BABYLON.Color3(0.2, 0.4, 0.1), BABYLON.Color3.Red(), scene);
+		createLight(new BABYLON.Vector3(-10, 10, 0), BABYLON.Color3.Blue(), BABYLON.Color3.Red(), scene);
+		createLight(new BABYLON.Vector3(0, 10, 10), BABYLON.Color3.Green(), new BABYLON.Color3(0.8, 0.4, 0.1), scene);
+		// mop: maxlights is 4 in babylon :(
+		//createLight(new BABYLON.Vector3(0, 10, -10), new BABYLON.Color3(0.2, 0.4, 0.1), BABYLON.Color3.Green(), scene);
+		
+		scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
+		scene.fogDensity = 0.1;
 
 		// mop: a new plane
 		var plane = BABYLON.Mesh.CreateGround("fluffi", 5, 5, 10, scene, true);
