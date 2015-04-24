@@ -20,71 +20,87 @@ html, body {
 	top: 10px;
 	color: white;
 }
+
+#debug {
+    position: absolute;
+    right: 0px;
+}
 </style>
-<script type="text/javascript" src="babylon.1.14-beta-debug.js"></script>
-<script type="text/javascript" src="cannon.js"></script>
+<script type="text/javascript" src="babylon.2.1-beta.debug.js"></script>
 </head>
 <body>
+    <button onclick="toggleDebug()" id="debug">Debug</button>
 <canvas id="canvas"></canvas>
 <script type="text/javascript">
 var canvas = document.getElementById("canvas");
 var engine = new BABYLON.Engine(canvas, true);
 BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
-	// file is loaded
-	scene.executeWhenReady(function () {
-		// scene (material et al) is ready
-		scene.activeCamera.attachControl(canvas);
-		// activate collision check on camera
-		scene.activeCamera.checkCollisions = true;
-		
-		var ground = scene.meshes[3];
-		ground.checkCollisions = true;
-		
-		var icosphere = scene.meshes[0];
-		icosphere.checkCollisions = true;
-		
-		scene.enablePhysics(null, new BABYLON.CannonJSPlugin());
-		icosphere.setPhysicsState(BABYLON.PhysicsEngine.SphereImpostor, { mass: 2, friction: 0.4, restitution: 0.3 });
-		// mop: mass 0 => static object
-		ground.setPhysicsState(BABYLON.PhysicsEngine.BoxImpostor, { mass: 0, friction: 0.4, restitution: 2 });
-		
-		var findNamedMesh = function(name) {
-			return scene.meshes.filter(function(mesh) {
-				return mesh.name == name;
-			})[0];
-		}
-		
-		var affenMaterial = new BABYLON.StandardMaterial("affenMaterial", scene);
-		affenMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);
-		affenMaterial.emissiveColor = new BABYLON.Color3(0, 0, 1);
-		
-		var affe = findNamedMesh("affe");
-		affe.material = affenMaterial;
-		
-		// mop: a new light :O
-		var light = new BABYLON.PointLight(null, new BABYLON.Vector3.Zero(), scene);
-		light.position.x = 2;
-		light.position.y = 10;
-		light.position.z = -5;
-		light.diffuse = BABYLON.Color3.Blue();
+    // file is loaded
+    scene.executeWhenReady(function () {
+        // scene (material et al) is ready
+        scene.activeCamera.attachControl(canvas);
+        // activate collision check on camera
+        scene.activeCamera.checkCollisions = true;
 
-		// mop: a new plane
-		var plane = BABYLON.Mesh.CreateGround("fluffi", 5, 5, 10, scene, true);
-		var material = new BABYLON.StandardMaterial("affenMaterial", scene);
-		material.wireframe = true;
-		plane.material = material;
-		plane.position.y = 2;
-		plane.position.x = -5;
-		plane.position.z = -5;
-		
-		var fps = document.getElementById("fps");
-		// Once the scene is loaded, just register a render loop to render it
-		engine.runRenderLoop(function() {
-			scene.render();
-			fps.innerHTML = BABYLON.Tools.GetFps().toFixed() + " fps";
-		});
-	});
+        var ground = scene.meshes[3];
+        ground.checkCollisions = true;
+
+        var icosphere = scene.meshes[0];
+        icosphere.checkCollisions = true;
+
+        scene.enablePhysics(null, new BABYLON.CannonJSPlugin());
+        icosphere.setPhysicsState(BABYLON.PhysicsEngine.SphereImpostor, { mass: 2, friction: 0.4, restitution: 0.3 });
+        // mop: mass 0 => static object
+        ground.setPhysicsState(BABYLON.PhysicsEngine.BoxImpostor, { mass: 0, friction: 0.4, restitution: 2 });
+
+        var findNamedMesh = function(name) {
+            return scene.meshes.filter(function(mesh) {
+                return mesh.name == name;
+            })[0];
+        }
+
+        var affenMaterial = new BABYLON.StandardMaterial("affenMaterial", scene);
+        affenMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);
+        affenMaterial.emissiveColor = new BABYLON.Color3(0, 0, 1);
+
+        var affe = findNamedMesh("affe");
+        affe.material = affenMaterial;
+
+        // mop: a new light :O
+        var light = new BABYLON.PointLight(null, new BABYLON.Vector3.Zero(), scene);
+        light.position.x = 2;
+        light.position.y = 10;
+        light.position.z = -5;
+        light.diffuse = BABYLON.Color3.Blue();
+
+        // mop: a new plane
+        var plane = BABYLON.Mesh.CreateGround("fluffi", 5, 5, 10, scene, true);
+        var material = new BABYLON.StandardMaterial("affenMaterial", scene);
+        material.wireframe = true;
+        plane.material = material;
+        plane.position.y = 2;
+        plane.position.x = -5;
+        plane.position.z = -5;
+
+        var fps = document.getElementById("fps");
+        // Once the scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function() {
+            scene.render();
+            fps.innerHTML = engine.getFps().toFixed() + " fps";
+        });
+    });
 });
+
+var debug = false;
+var toggleDebug = function() {
+    debug = !debug;
+    var debugLayer = engine.scenes[0].debugLayer;
+    if (debug) {
+        debugLayer.show();
+    } else {
+        debugLayer.hide();
+    }
+}
 </script>
 <div id="fps"></div>
 </body>
