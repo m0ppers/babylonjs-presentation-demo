@@ -20,120 +20,139 @@ html, body {
 	top: 10px;
 	color: white;
 }
+
+#debug {
+    position: absolute;
+    right: 0px;
+}
 </style>
-<script type="text/javascript" src="babylon.1.14-beta-debug.js"></script>
 <script type="text/javascript" src="cannon.js"></script>
+<script type="text/javascript" src="babylon.2.1-beta.debug.js"></script>
 </head>
 <body>
+    <button onclick="toggleDebug()" id="debug">Debug</button>
 <canvas id="canvas"></canvas>
 <script type="text/javascript">
 var canvas = document.getElementById("canvas");
 var engine = new BABYLON.Engine(canvas, true);
 BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
-	// file is loaded
-	scene.executeWhenReady(function () {
-		// scene (material et al) is ready
-		scene.activeCamera.attachControl(canvas);
-		// activate collision check on camera
-		scene.activeCamera.checkCollisions = true;
-		
-		var ground = scene.meshes[3];
-		ground.checkCollisions = true;
-		
-		var icosphere = scene.meshes[0];
-		icosphere.checkCollisions = true;
-		
-		scene.enablePhysics(null, new BABYLON.CannonJSPlugin());
-		icosphere.setPhysicsState(BABYLON.PhysicsEngine.SphereImpostor, { mass: 2, friction: 0.4, restitution: 0.3 });
-		// mop: mass 0 => static object
-		ground.setPhysicsState(BABYLON.PhysicsEngine.BoxImpostor, { mass: 0, friction: 0.4, restitution: 2 });
-		
-		var findNamedMesh = function(name) {
-			return scene.meshes.filter(function(mesh) {
-				return mesh.name == name;
-			})[0];
-		}
-		
-		var affenMaterial = new BABYLON.StandardMaterial("affenMaterial", scene);
-		affenMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);
-		affenMaterial.emissiveColor = new BABYLON.Color3(0, 0, 1);
-		
-		var affe = findNamedMesh("affe");
-		affe.material = affenMaterial;
-		
-		/*for (var i=0;i<500;i++) {
-			// depends a lot on your environment if this can make a difference. at home on my desktop clone vs createInstance is 8fps vs 60fps at
-			// 5k affen
-			var childAffe = affe.createInstance();
-			childAffe.position.x = Math.random() * 10 - 5;
-			childAffe.position.z = Math.random() * 10 - 5;
-		}*/
-		
-		// mop: a new light :O
-		var light = new BABYLON.PointLight(null, new BABYLON.Vector3.Zero(), scene);
-		light.position.x = 2;
-		light.position.y = 10;
-		light.position.z = -5;
-		light.diffuse = BABYLON.Color3.Blue();
+    // file is loaded
+    scene.executeWhenReady(function () {
+        // scene (material et al) is ready
+        scene.activeCamera.attachControl(canvas);
+        // activate collision check on camera
+        scene.activeCamera.checkCollisions = true;
 
-		// mop: a new plane
-		var plane = BABYLON.Mesh.CreateGround("fluffi", 5, 5, 10, scene, true);
-		var material = new BABYLON.StandardMaterial("affenMaterial", scene);
-		material.wireframe = true;
-		plane.material = material;
-		plane.position.y = 2;
-		plane.position.x = -5;
-		plane.position.z = -5;
-		plane.setPhysicsState(BABYLON.PhysicsEngine.MeshImpostor, { mass: 0, friction: 0.4, restitution: 0.3});
-		
-		var affenRotation = 0;
-		var createBlob = function(position) {
-			var sphere = new BABYLON.Mesh.CreateSphere(null, 10, 10, scene);
-			sphere.position = position;
-			sphere.scaling.x = 0.1;
-			sphere.scaling.y = 0.1;
-			sphere.scaling.z = 0.1;
-			sphere.setPhysicsState(BABYLON.PhysicsEngine.SphereImpostor, { mass: 1, friction: 0.4, restitution: 0.3 });			
-			
-			return sphere;
-		};
-		scene.onPointerDown = function(evt, result) {
-			if (result.hit) {
-				if (result.pickedMesh === ground) {
-					var position = new BABYLON.Vector3(result.pickedPoint.x, 5, result.pickedPoint.z);
-					createBlob(position);
-				} else if (result.pickedMesh === affe) {
-					if (evt.button == 0) {
-						affenRotation += 0.01;
-					} else if (evt.button == 1) {
-						affenRotation -= 0.01;
-					}
-				}
-			}
-		};
-		// interestingly you can't do scene.onKeyDown it seems :S
-		window.addEventListener("keydown", function(evt) {
-			if (evt.keyCode == 32) {
-				var position = scene.activeCamera.position.clone();
-				var sphere = createBlob(position);
-				
-				var direction = scene.activeCamera.getTarget().subtract(position);
-				
-				
-				sphere.applyImpulse(direction.multiplyByFloats(20, 20, 20), position.subtract(direction));
-				
-			}
-		}, false);
-	
-		var fps = document.getElementById("fps");
-		// Once the scene is loaded, just register a render loop to render it
-		engine.runRenderLoop(function() {
-			affe.rotation.z += affenRotation;
-			scene.render();
-			fps.innerHTML = BABYLON.Tools.GetFps().toFixed() + " fps";
-		});
-	});
+        var ground = scene.meshes[3];
+        ground.checkCollisions = true;
+
+        var icosphere = scene.meshes[0];
+        icosphere.checkCollisions = true;
+
+        scene.enablePhysics(null, new BABYLON.CannonJSPlugin());
+        console.log(scene._physicsEngine);
+        icosphere.setPhysicsState(BABYLON.PhysicsEngine.SphereImpostor, { mass: 2, friction: 0.4, restitution: 0.3 });
+        // mop: mass 0 => static object
+        ground.setPhysicsState(BABYLON.PhysicsEngine.BoxImpostor, { mass: 0, friction: 0.4, restitution: 2 });
+
+        var findNamedMesh = function(name) {
+            return scene.meshes.filter(function(mesh) {
+                return mesh.name == name;
+            })[0];
+        }
+
+        var affenMaterial = new BABYLON.StandardMaterial("affenMaterial", scene);
+        affenMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);
+        affenMaterial.emissiveColor = new BABYLON.Color3(0, 0, 1);
+
+        var affe = findNamedMesh("affe");
+        affe.material = affenMaterial;
+
+        /*for (var i=0;i<500;i++) {
+        // depends a lot on your environment if this can make a difference. at home on my desktop clone vs createInstance is 8fps vs 60fps at
+        // 5k affen
+        var childAffe = affe.createInstance();
+        childAffe.position.x = Math.random() * 10 - 5;
+        childAffe.position.z = Math.random() * 10 - 5;
+        }*/
+
+        // mop: a new light :O
+        var light = new BABYLON.PointLight(null, new BABYLON.Vector3.Zero(), scene);
+        light.position.x = 2;
+        light.position.y = 10;
+        light.position.z = -5;
+        light.diffuse = BABYLON.Color3.Blue();
+
+        // mop: a new plane
+        var plane = BABYLON.Mesh.CreateGround("fluffi", 5, 5, 10, scene, true);
+        var material = new BABYLON.StandardMaterial("affenMaterial", scene);
+        material.wireframe = true;
+        plane.material = material;
+        plane.position.y = 2;
+        plane.position.x = -5;
+        plane.position.z = -5;
+        plane.setPhysicsState(BABYLON.PhysicsEngine.MeshImpostor, { mass: 0, friction: 0.4, restitution: 0.3});
+
+        var affenRotation = 0;
+        var createBlob = function(position) {
+            var sphere = new BABYLON.Mesh.CreateSphere(null, 10, 10, scene);
+            sphere.position = position;
+            sphere.scaling.x = 0.1;
+            sphere.scaling.y = 0.1;
+            sphere.scaling.z = 0.1;
+            sphere.setPhysicsState(BABYLON.PhysicsEngine.SphereImpostor, { mass: 1, friction: 0.4, restitution: 0.3 });			
+
+            return sphere;
+        };
+        scene.onPointerDown = function(evt, result) {
+            if (result.hit) {
+                if (result.pickedMesh === ground) {
+                    var position = new BABYLON.Vector3(result.pickedPoint.x, 5, result.pickedPoint.z);
+                    createBlob(position);
+                } else if (result.pickedMesh === affe) {
+                    if (evt.button == 0) {
+                        affenRotation += 0.01;
+                    } else if (evt.button == 1) {
+                        affenRotation -= 0.01;
+                    }
+                }
+            }
+        };
+        // interestingly you can't do scene.onKeyDown it seems :S
+        window.addEventListener("keydown", function(evt) {
+            if (evt.keyCode == 32) {
+                var position = scene.activeCamera.position.clone();
+                var sphere = createBlob(position);
+
+                var direction = scene.activeCamera.getTarget().subtract(position);
+
+
+                sphere.applyImpulse(direction.multiplyByFloats(20, 20, 20), position.subtract(direction));
+
+            }
+        }, false);
+
+
+        var fps = document.getElementById("fps");
+        // Once the scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function() {
+            affe.rotation.z += affenRotation;
+            scene.render();
+            fps.innerHTML = engine.getFps().toFixed() + " fps";
+        });
+    });
 });
+
+var debug = false;
+var toggleDebug = function() {
+    debug = !debug;
+    var debugLayer = engine.scenes[0].debugLayer;
+    if (debug) {
+        debugLayer.show();
+    } else {
+        debugLayer.hide();
+    }
+}
 </script>
 <div id="fps"></div>
 </body>
