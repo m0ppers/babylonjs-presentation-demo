@@ -20,28 +20,43 @@ html, body {
 	top: 10px;
 	color: white;
 }
+
+#debug {
+    position: absolute;
+    right: 0px;
+}
 </style>
-<script type="text/javascript" src="babylon.1.14-beta-debug.js"></script>
+<script type="text/javascript" src="babylon.2.1-beta.debug.js"></script>
 </head>
 <body>
+    <button onclick="toggleDebug()" id="debug">Debug</button>
 <canvas id="canvas"></canvas>
 <script type="text/javascript">
 var canvas = document.getElementById("canvas");
 var engine = new BABYLON.Engine(canvas, true);
 BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
-	// file is loaded
-	scene.executeWhenReady(function () {
-		// scene (material et al) is ready
-		scene.activeCamera.attachControl(canvas);
-		
-		var fps = document.getElementById("fps");
-		// Once the scene is loaded, just register a render loop to render it
-		engine.runRenderLoop(function() {
-			scene.render();
-			fps.innerHTML = BABYLON.Tools.GetFps().toFixed() + " fps";
-		});
-	});
+    // file is loaded
+    scene.executeWhenReady(function () {
+        scene.activeCamera.attachControl(canvas);
+        var fps = document.getElementById("fps");
+        // Once the scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function() {
+            scene.render();
+            fps.innerHTML = engine.getFps().toFixed() + " fps";
+        });
+    });
 });
+
+var debug = false;
+var toggleDebug = function() {
+    debug = !debug;
+    var debugLayer = engine.scenes[0].debugLayer;
+    if (debug) {
+        debugLayer.show();
+    } else {
+        debugLayer.hide();
+    }
+}
 </script>
 <div id="fps"></div>
 </body>
