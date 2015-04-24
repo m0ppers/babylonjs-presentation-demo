@@ -21,7 +21,7 @@ html, body {
 	color: white;
 }
 </style>
-<script type="text/javascript" src="babylon.1.14-beta-debug.js"></script>
+<script type="text/javascript" src="babylon.2.1-beta.debug.js"></script>
 </head>
 <body>
 <canvas id="canvas"></canvas>
@@ -29,15 +29,15 @@ html, body {
 var canvas = document.getElementById("canvas");
 var engine = new BABYLON.Engine(canvas, true);
 BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
-	// file is loaded
-	scene.executeWhenReady(function () {
-		var fps = document.getElementById("fps");
-		// Once the scene is loaded, just register a render loop to render it
-		engine.runRenderLoop(function() {
-			scene.render();
-			fps.innerHTML = BABYLON.Tools.GetFps().toFixed() + " fps";
-		});
-	});
+    // file is loaded
+    scene.executeWhenReady(function () {
+        var fps = document.getElementById("fps");
+        // Once the scene is loaded, just register a render loop to render it
+        engine.runRenderLoop(function() {
+            scene.render();
+            fps.innerHTML = BABYLON.Tools.GetFps().toFixed() + " fps";
+        });
+    });
 });
 </script>
 <div id="fps"></div>
