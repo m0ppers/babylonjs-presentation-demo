@@ -35,7 +35,7 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
         // Once the scene is loaded, just register a render loop to render it
         engine.runRenderLoop(function() {
             scene.render();
-            fps.innerHTML = BABYLON.Tools.GetFps().toFixed() + " fps";
+            fps.innerHTML = engine.getFps().toFixed() + " fps";
         });
     });
 });
