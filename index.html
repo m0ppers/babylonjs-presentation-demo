@@ -20,10 +20,16 @@ html, body {
 	top: 10px;
 	color: white;
 }
+
+#debug {
+    position: absolute;
+    right: 0px;
+}
 </style>
 <script type="text/javascript" src="babylon.2.1-beta.debug.js"></script>
 </head>
 <body>
+    <button onclick="toggleDebug()" id="debug">Debug</button>
 <canvas id="canvas"></canvas>
 <script type="text/javascript">
 var canvas = document.getElementById("canvas");
@@ -39,6 +45,17 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
         });
     });
 });
+
+var debug = false;
+var toggleDebug = function() {
+    debug = !debug;
+    var debugLayer = engine.scenes[0].debugLayer;
+    if (debug) {
+        debugLayer.show();
+    } else {
+        debugLayer.hide();
+    }
+}
 </script>
 <div id="fps"></div>
 </body>
