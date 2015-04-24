@@ -66,6 +66,15 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
         var affe = findNamedMesh("affe");
         affe.material = affenMaterial;
 
+        for (var i=0;i<500;i++) {
+            // depends a lot on your environment if this can make a difference. at home on my desktop clone vs createInstance is 8fps vs 60fps at
+            // 5k affen
+            var childAffe = affe.createInstance();
+            childAffe.position.x = Math.random() * 10 - 5;
+            childAffe.position.z = Math.random() * 10 - 5;
+        }
+
+
         // mop: a new light :O
         var light = new BABYLON.PointLight(null, new BABYLON.Vector3.Zero(), scene);
         light.position.x = 2;
@@ -81,6 +90,15 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
         plane.position.y = 2;
         plane.position.x = -5;
         plane.position.z = -5;
+
+        for (var i=0;i<500;i++) {
+            // depends a lot on your environment if this can make a difference. at home on my desktop clone vs createInstance is 8fps vs 60fps at
+            // 5k affen
+            var childAffe = affe.createInstance();
+            childAffe.position.x = Math.random() * 10 - 5;
+            childAffe.position.z = Math.random() * 10 - 5;
+        }
+
 
         var fps = document.getElementById("fps");
         // Once the scene is loaded, just register a render loop to render it
