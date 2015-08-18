@@ -114,7 +114,7 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
                     BABYLON.Animation.ANIMATIONTYPE_FLOAT,
                     BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
 
-            var keys = [];  
+            var keys = [];
             keys.push({
                 frame: 0,
                 value: light.direction.y
@@ -172,7 +172,7 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
             sphere.scaling.x = 0.1;
             sphere.scaling.y = 0.1;
             sphere.scaling.z = 0.1;
-            sphere.setPhysicsState(BABYLON.PhysicsEngine.SphereImpostor, { mass: 1, friction: 0.4, restitution: 0.3 });			
+            sphere.setPhysicsState(BABYLON.PhysicsEngine.SphereImpostor, { mass: 1, friction: 0.4, restitution: 0.3 });
 
             return sphere;
         };
@@ -220,24 +220,23 @@ BABYLON.SceneLoader.Load("", "colognejs.babylon", engine, function (scene) {
         var time = 0.0;
         shaderMaterial.setFloat("time", time);
         shaderPlane.material = shaderMaterial;
-        
+
         var sphere = new BABYLON.Mesh.CreateSphere("NAGNAGNAG", 10, 2, scene);
         var sphereXOffset = 0;
         var sphereZOffset = -4;
         sphere.position.y = 3;
         sphere.position.z = -4;
-        var sound = new BABYLON.Sound(null, "sound_laserbeam.ogg", scene, function() {
-            sound.play();
-        });
+        var sound = new BABYLON.Sound(null, "nag.ogg", scene, function() {
+        }, {loop: true, autoplay: true});
         sound.attachToMesh(sphere);
 
         var fps = document.getElementById("fps");
         // Once the scene is loaded, just register a render loop to render it
         engine.runRenderLoop(function() {
             time++;
-            
-            sphere.position.x = Math.sin(time / 100) * 4 + sphereXOffset;
-            sphere.position.z = Math.cos(time / 100) * 10 + sphereZOffset;
+
+            sphere.position.x = Math.sin(time / 100) * 40 + sphereXOffset;
+            sphere.position.z = Math.cos(time / 100) * 100 + sphereZOffset;
 
             shaderMaterial.setFloat("time", time);
             affe.rotation.z += affenRotation;
